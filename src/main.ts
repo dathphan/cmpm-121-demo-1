@@ -1,5 +1,6 @@
 import "./style.css";
 
+// Variables
 let counter: number = 0;
 let autoClickRate: number = 0;
 let prevTimestep: number = -1;
@@ -27,7 +28,7 @@ updateCounter();
 app.append(counterDisplay);
 
 // Upgrades
-type Upgrade = {
+interface Item {
   cost: number;
   upgrade: number;
   name: string;
@@ -35,7 +36,7 @@ type Upgrade = {
   count: number;
 };
 
-const tier1: Upgrade = {
+const tier1: Item = {
   cost: 10,
   upgrade: 0.1,
   name: "Rub",
@@ -43,7 +44,7 @@ const tier1: Upgrade = {
   count: 0,
 };
 
-const tier2: Upgrade = {
+const tier2: Item = {
   cost: 100,
   upgrade: 2.0,
   name: "Brush",
@@ -51,7 +52,7 @@ const tier2: Upgrade = {
   count: 0,
 };
 
-const tier3: Upgrade = {
+const tier3: Item = {
   cost: 1000,
   upgrade: 50,
   name: "Snack",
@@ -59,7 +60,7 @@ const tier3: Upgrade = {
   count: 0,
 };
 
-const upgrades: Upgrade[] = [tier1, tier2, tier3];
+const upgrades: Item[] = [tier1, tier2, tier3];
 
 upgrades.forEach((u) => {
   u.button.innerHTML =
