@@ -4,6 +4,7 @@ let counter: number = 0;
 let autoClickRate: number = 0;
 let prevTimestep: number = -1;
 
+const inflationRate: number = 1.15;
 const MILI_TO_SEC: number = 1000;
 
 // Web Page
@@ -27,46 +28,48 @@ app.append(counterDisplay);
 
 // Upgrades
 type Upgrade = {
-    cost: number;
-    upgrade: number;
-    name: string;
-    button: HTMLButtonElement;
-    count: number;
+  cost: number;
+  upgrade: number;
+  name: string;
+  button: HTMLButtonElement;
+  count: number;
 };
 
-let tier1 : Upgrade = {
-    cost: 10,
-    upgrade: 0.1, 
-    name: "Rub",
-    button: document.createElement("button"),
-    count: 0
-}
+const tier1: Upgrade = {
+  cost: 10,
+  upgrade: 0.1,
+  name: "Rub",
+  button: document.createElement("button"),
+  count: 0,
+};
 
-let tier2 : Upgrade = {
-    cost: 100,
-    upgrade: 2.0, 
-    name: "Brush",
-    button: document.createElement("button"),
-    count: 0
-}
+const tier2: Upgrade = {
+  cost: 100,
+  upgrade: 2.0,
+  name: "Brush",
+  button: document.createElement("button"),
+  count: 0,
+};
 
-let tier3 : Upgrade = {
-    cost: 1000,
-    upgrade: 50, 
-    name: "Snack",
-    button: document.createElement("button"),
-    count: 0
-}
+const tier3: Upgrade = {
+  cost: 1000,
+  upgrade: 50,
+  name: "Snack",
+  button: document.createElement("button"),
+  count: 0,
+};
 
-let upgrades: Upgrade[] = [tier1, tier2, tier3];
+const upgrades: Upgrade[] = [tier1, tier2, tier3];
 
-upgrades.forEach(u => {
-    u.button.innerHTML = u.name + " [" + u.cost + "]";
-    u.button.addEventListener("click", (e) => {
-        u.count++;
-        upgradeAutoclick(u.upgrade, u.cost);
-    });
-    app.append(u.button);
+upgrades.forEach((u) => {
+  u.button.innerHTML = u.name + " [" + parseFloat(u.cost.toFixed(3)).toString() + "]";
+  u.button.addEventListener("click", () => {
+    upgradeAutoclick(u.upgrade, u.cost);
+    u.count++;
+    u.cost *= inflationRate;
+    u.button.innerHTML = u.name + " [" + parseFloat(u.cost.toFixed(3)).toString() + "]";
+  });
+  app.append(u.button);
 });
 
 const upgradeStatus = document.createElement("div");
@@ -78,48 +81,49 @@ requestAnimationFrame(autoClick);
 
 // Functions
 function onButtonPress() {
-    changeCount(1);
+  changeCount(1);
 }
 
 function changeCount(change: number = 1) {
-    counter += change;
-    updateCounter();
-    updateButtons();
+  counter += change;
+  updateCounter();
+  updateButtons();
 }
 
 function upgradeAutoclick(change: number = 1, cost: number = 10) {
-    autoClickRate += change;
-    counter -= cost;
-    updateStatus();
+  autoClickRate += change;
+  counter -= cost;
+  updateStatus();
 }
 
 function autoClick(timestep: number) {
-    if (prevTimestep < 0) {
-        prevTimestep = timestep;
-    }
-    const deltaTime = timestep - prevTimestep;
+  if (prevTimestep < 0) {
     prevTimestep = timestep;
+  }
+  const deltaTime = timestep - prevTimestep;
+  prevTimestep = timestep;
 
-    console.log(autoClickRate);
-    changeCount((autoClickRate * deltaTime) / MILI_TO_SEC);
-    requestAnimationFrame(autoClick);
+  console.log(autoClickRate);
+  changeCount((autoClickRate * deltaTime) / MILI_TO_SEC);
+  requestAnimationFrame(autoClick);
 }
 
 function updateCounter() {
-    counterDisplay.innerHTML = "<h2>Purr Frequency: </h2><h1>" + counter.toFixed(3) + "</h1>";
+  counterDisplay.innerHTML =
+    "<h2>Purr Frequency: </h2><h1>" + parseFloat(counter.toFixed(3)).toString() + "</h1>";
 }
 
 function updateButtons() {
-    upgrades.forEach(u => {
-        u.button.disabled = counter < u.cost;
-    });
+  upgrades.forEach((u) => {
+    u.button.disabled = counter < u.cost;
+  });
 }
 
 function updateStatus() {
-    let text: string = "";
-    text += "<h3>" + autoClickRate.toFixed(1) + " tigers/sec</h3>";
-    upgrades.forEach(u => {
-        text += u.count + " " + u.name + (u.count != 1 ? "s<br>" : "<br>")
-    });
-    upgradeStatus.innerHTML = text;
+  let text: string = "";
+  text += "<h3>" + parseFloat(autoClickRate.toFixed(1)).toString() + " tigers/sec</h3>";
+  upgrades.forEach((u) => {
+    text += u.count + " " + u.name + (u.count != 1 ? "s<br>" : "<br>");
+  });
+  upgradeStatus.innerHTML = text;
 }
