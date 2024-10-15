@@ -1,10 +1,11 @@
 import "./style.css";
 
 let counter: number = 0;
-let autoClickRate: number = 1;
+let autoClickRate: number = 0;
+const upgradeCost: number = 10;
 let prevTimestep: number = -1;
 
-const MILI_TO_SEC: number = 1000
+const MILI_TO_SEC: number = 1000;
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
@@ -24,29 +25,41 @@ const counterDisplay = document.createElement("div");
 updateCounter();
 app.append(counterDisplay);
 
+const upgrade = document.createElement("button");
+upgrade.innerHTML = "more tigers pls";
+upgrade.addEventListener("click", upgradeAutoclick);
+app.append(upgrade);
+
 // Start
-requestAnimationFrame(autoClick)
+requestAnimationFrame(autoClick);
 
 function onButtonPress() {
-    changeCount(1);
+  changeCount(1);
 }
 
 function changeCount(change: number = 1) {
-    counter += change;
-    updateCounter();
+  counter += change;
+  updateCounter();
+  upgrade.disabled = counter < upgradeCost;
+}
+
+function upgradeAutoclick() {
+  autoClickRate += 1;
+  counter -= upgradeCost;
 }
 
 function autoClick(timestep: number) {
-    if (prevTimestep < 0) {
-        prevTimestep = timestep;
-    }
-    const deltaTime = timestep - prevTimestep;
+  if (prevTimestep < 0) {
     prevTimestep = timestep;
+  }
+  const deltaTime = timestep - prevTimestep;
+  prevTimestep = timestep;
 
-    changeCount(autoClickRate * deltaTime / MILI_TO_SEC);
-    requestAnimationFrame(autoClick);
+  console.log(autoClickRate);
+  changeCount((autoClickRate * deltaTime) / MILI_TO_SEC);
+  requestAnimationFrame(autoClick);
 }
 
 function updateCounter() {
-    counterDisplay.innerHTML = "Tigers: " + counter;
+  counterDisplay.innerHTML = "Tigers: " + counter.toFixed(3);
 }
