@@ -62,12 +62,14 @@ const tier3: Upgrade = {
 const upgrades: Upgrade[] = [tier1, tier2, tier3];
 
 upgrades.forEach((u) => {
-  u.button.innerHTML = u.name + " [" + parseFloat(u.cost.toFixed(3)).toString() + "]";
+  u.button.innerHTML =
+    u.name + " [" + parseFloat(u.cost.toFixed(3)).toString() + "]";
   u.button.addEventListener("click", () => {
     upgradeAutoclick(u.upgrade, u.cost);
     u.count++;
     u.cost *= inflationRate;
-    u.button.innerHTML = u.name + " [" + parseFloat(u.cost.toFixed(3)).toString() + "]";
+    u.button.innerHTML =
+      u.name + " [" + parseFloat(u.cost.toFixed(3)).toString() + "]";
   });
   app.append(u.button);
 });
@@ -110,7 +112,9 @@ function autoClick(timestep: number) {
 
 function updateCounter() {
   counterDisplay.innerHTML =
-    "<h2>Purr Frequency: </h2><h1>" + parseFloat(counter.toFixed(3)).toString() + "</h1>";
+    "<h2>Purr Frequency: </h2><h1>" +
+    parseFloat(counter.toFixed(3)).toString() +
+    "</h1>";
 }
 
 function updateButtons() {
@@ -121,7 +125,10 @@ function updateButtons() {
 
 function updateStatus() {
   let text: string = "";
-  text += "<h3>" + parseFloat(autoClickRate.toFixed(1)).toString() + " tigers/sec</h3>";
+  text +=
+    "<h3>" +
+    parseFloat(autoClickRate.toFixed(1)).toString() +
+    " tigers/sec</h3>";
   upgrades.forEach((u) => {
     text += u.count + " " + u.name + (u.count != 1 ? "s<br>" : "<br>");
   });
