@@ -1,5 +1,7 @@
 import "./style.css";
 
+let counter: number = 0;
+
 const app: HTMLDivElement = document.querySelector("#app")!;
 
 const gameName = "My okay game :3";
@@ -11,4 +13,18 @@ app.append(header);
 
 const button = document.createElement("button");
 button.innerHTML = "🐯";
+button.addEventListener("click", onButtonPress)
 app.append(button);
+
+const counterDisplay = document.createElement("div");
+updateCounter();
+app.append(counterDisplay);
+
+function onButtonPress(){
+    counter++;
+    updateCounter();
+}
+
+function updateCounter(){
+    counterDisplay.innerHTML = "Tigers: " + counter;
+}
