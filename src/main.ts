@@ -2,22 +2,22 @@ import "./style.css";
 
 let counter: number = 0;
 let autoClickRate: number = 0;
-const upgradeCost: number = 10;
 let prevTimestep: number = -1;
 
 const MILI_TO_SEC: number = 1000;
 
+// Web Page
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-const gameName = "My okay game :3";
+const gameName = "Pet The Really Big Kitty";
 document.title = gameName;
 
-const header = document.createElement("h1");
+const header = document.createElement("h2");
 header.innerHTML = gameName;
 app.append(header);
 
 const button = document.createElement("button");
-button.innerHTML = "🐯";
+button.innerHTML = "<h1>🐯</h1>";
 button.addEventListener("click", onButtonPress);
 app.append(button);
 
@@ -25,41 +25,101 @@ const counterDisplay = document.createElement("div");
 updateCounter();
 app.append(counterDisplay);
 
-const upgrade = document.createElement("button");
-upgrade.innerHTML = "more tigers pls";
-upgrade.addEventListener("click", upgradeAutoclick);
-app.append(upgrade);
+// Upgrades
+type Upgrade = {
+    cost: number;
+    upgrade: number;
+    name: string;
+    button: HTMLButtonElement;
+    count: number;
+};
+
+let tier1 : Upgrade = {
+    cost: 10,
+    upgrade: 0.1, 
+    name: "Rub",
+    button: document.createElement("button"),
+    count: 0
+}
+
+let tier2 : Upgrade = {
+    cost: 100,
+    upgrade: 2.0, 
+    name: "Brush",
+    button: document.createElement("button"),
+    count: 0
+}
+
+let tier3 : Upgrade = {
+    cost: 1000,
+    upgrade: 50, 
+    name: "Snack",
+    button: document.createElement("button"),
+    count: 0
+}
+
+let upgrades: Upgrade[] = [tier1, tier2, tier3];
+
+upgrades.forEach(u => {
+    u.button.innerHTML = u.name + " [" + u.cost + "]";
+    u.button.addEventListener("click", (e) => {
+        u.count++;
+        upgradeAutoclick(u.upgrade, u.cost);
+    });
+    app.append(u.button);
+});
+
+const upgradeStatus = document.createElement("div");
+updateStatus();
+app.append(upgradeStatus);
 
 // Start
 requestAnimationFrame(autoClick);
 
+// Functions
 function onButtonPress() {
-  changeCount(1);
+    changeCount(1);
 }
 
 function changeCount(change: number = 1) {
-  counter += change;
-  updateCounter();
-  upgrade.disabled = counter < upgradeCost;
+    counter += change;
+    updateCounter();
+    updateButtons();
 }
 
-function upgradeAutoclick() {
-  autoClickRate += 1;
-  counter -= upgradeCost;
+function upgradeAutoclick(change: number = 1, cost: number = 10) {
+    autoClickRate += change;
+    counter -= cost;
+    updateStatus();
 }
 
 function autoClick(timestep: number) {
-  if (prevTimestep < 0) {
+    if (prevTimestep < 0) {
+        prevTimestep = timestep;
+    }
+    const deltaTime = timestep - prevTimestep;
     prevTimestep = timestep;
-  }
-  const deltaTime = timestep - prevTimestep;
-  prevTimestep = timestep;
 
-  console.log(autoClickRate);
-  changeCount((autoClickRate * deltaTime) / MILI_TO_SEC);
-  requestAnimationFrame(autoClick);
+    console.log(autoClickRate);
+    changeCount((autoClickRate * deltaTime) / MILI_TO_SEC);
+    requestAnimationFrame(autoClick);
 }
 
 function updateCounter() {
-  counterDisplay.innerHTML = "Tigers: " + counter.toFixed(3);
+    counterDisplay.innerHTML = "<h2>Purr Frequency: </h2><h1>" + counter.toFixed(3) + "</h1>";
+}
+
+function updateButtons() {
+    upgrades.forEach(u => {
+        u.button.disabled = counter < u.cost;
+    });
+}
+
+function updateStatus() {
+    let text: string = "";
+    text += "<h3>" + autoClickRate.toFixed(1) + " tigers/sec</h3>";
+    upgrades.forEach(u => {
+        text += u.count + " " + u.name + (u.count != 1 ? "s<br>" : "<br>")
+    });
+    upgradeStatus.innerHTML = text;
 }
