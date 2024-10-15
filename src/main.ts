@@ -13,18 +13,18 @@ app.append(header);
 
 const button = document.createElement("button");
 button.innerHTML = "🐯";
-button.addEventListener("click", onButtonPress)
+button.addEventListener("click", onButtonPress);
 app.append(button);
 
 const counterDisplay = document.createElement("div");
 updateCounter();
 app.append(counterDisplay);
 
-function onButtonPress(){
-    counter++;
-    updateCounter();
+function onButtonPress() {
+  counter++;
+  updateCounter();
 }
 
-function updateCounter(){
-    counterDisplay.innerHTML = "Tigers: " + counter;
+function updateCounter() {
+  counterDisplay.innerHTML = "Tigers: " + counter;
 }
