@@ -20,11 +20,18 @@ const counterDisplay = document.createElement("div");
 updateCounter();
 app.append(counterDisplay);
 
+// Start
+setInterval(changeCount, 1000, 1)
+
 function onButtonPress() {
-  counter++;
-  updateCounter();
+    changeCount(1);
+}
+
+function changeCount(change: number = 1) {
+    counter += change
+    updateCounter();
 }
 
 function updateCounter() {
-  counterDisplay.innerHTML = "Tigers: " + counter;
+    counterDisplay.innerHTML = "Tigers: " + counter;
 }
