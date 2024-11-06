@@ -24,8 +24,11 @@ header.innerHTML = gameName;
 app.append(header);
 
 const button = document.createElement("button");
-button.innerHTML = "<h1>🐯</h1>";
+button.innerHTML = "🐯";
+button.classList.add("tiger");
 button.addEventListener("click", onButtonPress);
+buttonAnimation(button);
+
 app.append(button);
 
 const counterDisplay = document.createElement("div");
@@ -149,7 +152,10 @@ function updateButtons() {
   upgrades.forEach((upgrade) => {
     upgrade.button.disabled = counter < upgrade.cost;
     upgrade.button.innerHTML =
-      upgrade.name + " [" + parseFloat(upgrade.cost.toFixed(3)).toString() + "]";
+      upgrade.name +
+      " [" +
+      parseFloat(upgrade.cost.toFixed(3)).toString() +
+      "]";
   });
 }
 
@@ -160,7 +166,11 @@ function updateStatus() {
     parseFloat(autoClickRate.toFixed(1)).toString() +
     " tigers/sec</h3>";
   upgrades.forEach((upgrade) => {
-    text += upgrade.count + " " + upgrade.name + (upgrade.count != 1 ? "s<br>" : "<br>");
+    text +=
+      upgrade.count +
+      " " +
+      upgrade.name +
+      (upgrade.count != 1 ? "s<br>" : "<br>");
   });
   upgradeStatus.innerHTML = text;
 }
@@ -184,4 +194,14 @@ function createUpgradeButton(upgrade: Item): void {
   });
 
   app.append(upgrade.button);
+}
+
+function buttonAnimation(button: HTMLButtonElement): void {
+  button.addEventListener("mousedown", () => {
+    button.style.transform = "scale(0.95)"
+  });
+
+  button.addEventListener("mouseup", () => {
+    button.style.transform = "scale(1)"
+  });
 }
