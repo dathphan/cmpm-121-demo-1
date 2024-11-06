@@ -1,5 +1,10 @@
 import "./style.css";
 
+// 3 Changes:
+// - Renamed some `u` in the for-loops
+// - made createUpgradeButton as its own function
+// - shortened autoclick() by moving some of it to calculateDeltaTime()
+
 // Variables
 let counter: number = 0;
 let autoClickRate: number = 0;
@@ -84,24 +89,13 @@ const tier5: Item = {
 
 const upgrades: Item[] = [tier1, tier2, tier3, tier4, tier5];
 
-let description = document.createElement("div");
+const description = document.createElement("div");
 app.append(description);
 
-upgrades.forEach((u) => {
-    u.button.innerHTML = u.name + " [" + parseFloat(u.cost.toFixed(3)).toString() + "]";
-    u.button.addEventListener("click", () => {
-      upgradeAutoclick(u.upgrade, u.cost);
-      u.count++;
-      u.cost *= inflationRate;
-    });
-    u.button.addEventListener("mouseenter", () => {
-      description.innerHTML = u.description;
-    });
-    u.button.addEventListener("mouseleave", () => {
-      description.innerHTML = "...";
-    });
-    app.append(u.button);
+upgrades.forEach((upgrade) => {
+  createUpgradeButton(upgrade);
 });
+
 app.append(description);
 
 const upgradeStatus = document.createElement("div");
@@ -129,15 +123,21 @@ function upgradeAutoclick(change: number = 1, cost: number = 10) {
 }
 
 function autoClick(timestep: number) {
+  const deltaTime = calculateDeltaTime(timestep);
+
+  changeCount((autoClickRate * deltaTime) / MILI_TO_SEC);
+  requestAnimationFrame(autoClick);
+}
+
+function calculateDeltaTime(timestep: number): number {
   if (prevTimestep < 0) {
     prevTimestep = timestep;
   }
+
   const deltaTime = timestep - prevTimestep;
   prevTimestep = timestep;
 
-  console.log(autoClickRate);
-  changeCount((autoClickRate * deltaTime) / MILI_TO_SEC);
-  requestAnimationFrame(autoClick);
+  return deltaTime;
 }
 
 function updateCounter() {
@@ -146,17 +146,42 @@ function updateCounter() {
 }
 
 function updateButtons() {
-  upgrades.forEach((u) => {
-    u.button.disabled = counter < u.cost;
-    u.button.innerHTML = u.name + " [" + parseFloat(u.cost.toFixed(3)).toString() + "]";
+  upgrades.forEach((upgrade) => {
+    upgrade.button.disabled = counter < upgrade.cost;
+    upgrade.button.innerHTML =
+      upgrade.name + " [" + parseFloat(upgrade.cost.toFixed(3)).toString() + "]";
   });
 }
 
 function updateStatus() {
   let text: string = "";
-  text += "<h3>" + parseFloat(autoClickRate.toFixed(1)).toString() + " tigers/sec</h3>";
-  upgrades.forEach((u) => {
-    text += u.count + " " + u.name + (u.count != 1 ? "s<br>" : "<br>");
+  text +=
+    "<h3>" +
+    parseFloat(autoClickRate.toFixed(1)).toString() +
+    " tigers/sec</h3>";
+  upgrades.forEach((upgrade) => {
+    text += upgrade.count + " " + upgrade.name + (upgrade.count != 1 ? "s<br>" : "<br>");
   });
   upgradeStatus.innerHTML = text;
+}
+
+function createUpgradeButton(upgrade: Item): void {
+  // Label upgrade and price
+  upgrade.button.innerHTML =
+    upgrade.name + " [" + parseFloat(upgrade.cost.toFixed(3)).toString() + "]";
+
+  // Event Listeners
+  upgrade.button.addEventListener("click", () => {
+    upgradeAutoclick(upgrade.upgrade, upgrade.cost);
+    upgrade.count++;
+    upgrade.cost *= inflationRate;
+  });
+  upgrade.button.addEventListener("mouseenter", () => {
+    description.innerHTML = upgrade.description;
+  });
+  upgrade.button.addEventListener("mouseleave", () => {
+    description.innerHTML = "...";
+  });
+
+  app.append(upgrade.button);
 }
